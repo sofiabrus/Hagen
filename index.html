@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4ede3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1d1713" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Hagen">
+<title>Symptomhagen</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+:root{
+  --bg:#f4ede3;--card:#fbf7f1;--ink:#3b2b23;--muted:#6f5c4e;--line:#e2d4c3;
+  --terra:#b0603f;--terra-soft:#f0dacd;--sage:#6f8462;--sage-soft:#dfe6d5;
+  --mustard:#b88a2e;--mustard-soft:#f1e3c2;--mauve:#8f7388;--mauve-soft:#e8dde4;
+  --petal:#f8eed8;--soil:#8a6a52;--soil-soft:#dccab6;--stone:#b3a594;
+  --leaf:#7d9568;--stem:#6d8559;--garden:#efe6d6;
+  --shadow:0 1px 2px rgba(59,43,35,.05),0 8px 24px rgba(59,43,35,.06);
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#1d1713;--card:#28201b;--ink:#f0e5d8;--muted:#bba896;--line:#3b2f28;
+  --terra:#d4876a;--terra-soft:#47291f;--sage:#a2b493;--sage-soft:#2c3628;
+  --mustard:#d8b260;--mustard-soft:#3f321a;--mauve:#b89bb0;--mauve-soft:#3a2d37;
+  --petal:#efe0c2;--soil:#6b5040;--soil-soft:#3a2d24;--stone:#7c7064;
+  --leaf:#8fa77a;--stem:#7f9869;--garden:#231c17;--shadow:none;
+}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;padding-bottom:calc(88px + env(safe-area-inset-bottom));-webkit-tap-highlight-color:transparent}
+h1,h2,h3,.serif{font-family:ui-serif,"New York","Iowan Old Style",Georgia,serif;font-weight:500;letter-spacing:-.01em}
+h1{font-size:28px;margin:0;line-height:1.15}
+h2{font-size:22px;margin:0 0 4px}
+main{max-width:560px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top)) 16px 24px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:4px 0 6px}
+.datenav{display:flex;align-items:center;gap:2px;min-width:0}
+.datenav .when{min-width:0;text-align:center}
+.todayhead{display:grid;grid-template-columns:88px 1fr 88px;align-items:center;margin:4px 0 6px}
+.todayhead .when{text-align:center;min-width:0}
+.todayhead .side{display:flex;align-items:center}
+.todayhead .side.r{justify-content:flex-end}
+.sub{color:var(--muted);font-size:15px}
+.iconbtn{width:44px;height:44px;flex:none;border-radius:50%;border:0;background:transparent;color:var(--ink);display:grid;place-items:center;cursor:pointer;font-size:22px}
+.iconbtn:disabled{opacity:.2;cursor:default}
+.iconbtn svg{width:22px;height:22px}
+.card{background:var(--card);border-radius:20px;padding:16px;margin:12px 0;box-shadow:var(--shadow);border:1px solid var(--line)}
+.label{font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;font-weight:600;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.label span{text-transform:none;letter-spacing:0;font-weight:500;font-size:14px}
+.row{display:flex;gap:10px}
+.wrap{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;color:inherit}
+.btn{min-height:52px;border-radius:16px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-weight:500;cursor:pointer;padding:10px 12px;flex:1;transition:transform .08s ease,background .15s,border-color .15s;line-height:1.2}
+.btn:active{transform:scale(.97)}
+.btn.small{min-height:44px;flex:none;padding:8px 10px;border-radius:14px;white-space:nowrap}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--terra);border-color:var(--terra)}
+.btn.on{background:var(--sage-soft);border-color:var(--sage)}
+.btn[data-v=plaget].on,.btn.on.mustard{background:var(--mustard-soft);border-color:var(--mustard)}
+.btn[data-v=toff].on,.btn.on.terra{background:var(--terra-soft);border-color:var(--terra)}
+.mood{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;min-height:92px}
+.mood svg{width:30px;height:30px}
+.hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 0 2px}
+.hero svg{width:190px;height:190px;max-width:60vw}
+.hero .msg{min-height:44px;color:var(--muted);font-size:15.5px;max-width:340px;margin-top:-6px}
+.pill{display:flex;align-items:center;justify-content:center;gap:10px;font-size:18px;min-height:64px}
+.pill.taken{background:var(--sage-soft);border-color:var(--sage)}
+.pill.due{border-color:var(--terra);border-style:dashed}
+.water{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.water .count{font-family:ui-serif,"New York",Georgia,serif;font-size:40px;line-height:1;text-align:center}
+.water .count small{display:block;font:500 13px/1.4 -apple-system,sans-serif;color:var(--muted);margin-top:4px}
+.round{width:60px;height:60px;border-radius:50%;flex:none;font-size:28px;padding:0;display:grid;place-items:center}
+.glasses{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.glass{width:14px;height:18px;border:1.5px solid var(--line);border-radius:2px 2px 5px 5px}
+.glass.full{background:#8fb1c0;border-color:#7aa1b2}
+@media (prefers-color-scheme:dark){.glass.full{background:#5f8696;border-color:#6f97a8}}
+.chip{min-height:44px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);padding:8px 16px;cursor:pointer;font-weight:500}
+.chip.on{background:var(--mauve-soft);border-color:var(--mauve)}
+.seg{display:flex;gap:8px}
+.seg .btn{min-height:48px}
+.list{list-style:none;margin:0;padding:0}
+.ep{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.ep:last-child{border-bottom:0}
+.ep .meta{color:var(--muted);font-size:14px}
+.sev{display:inline-flex;gap:3px;vertical-align:middle}
+.sev i{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.sev i.f{background:var(--terra)}
+.stools{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:var(--bg);border:1px solid var(--line);padding:4px 6px 4px 12px;font-size:14px}
+.tag button{border:0;background:transparent;width:28px;height:28px;border-radius:50%;cursor:pointer;color:var(--muted);font-size:16px}
+textarea,input[type=number],input[type=time],input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:12px;resize:vertical}
+textarea{min-height:76px}
+textarea:focus,input:focus{outline:2px solid var(--sage);outline-offset:1px}
+.banner{display:flex;flex-direction:column;gap:10px;background:var(--mustard-soft);border:1px solid var(--mustard);border-radius:18px;padding:14px 16px;margin:10px 0}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);display:flex;justify-content:center;padding:6px 8px calc(6px + env(safe-area-inset-bottom));z-index:20}
+nav.tabs .in{display:flex;max-width:560px;width:100%}
+nav.tabs button{flex:1;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;min-height:54px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;letter-spacing:.02em}
+nav.tabs button svg{width:24px;height:24px}
+nav.tabs button.on{color:var(--ink)}
+nav.tabs button.on svg{color:var(--sage)}
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:16px;font-size:15px;max-width:calc(100% - 32px);width:max-content;opacity:0;pointer-events:none;transition:.25s ease;z-index:40;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.overlay{position:fixed;inset:0;background:rgba(29,23,19,.45);z-index:30;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--card);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:24px 24px 0 0;padding:10px 16px calc(20px + env(safe-area-inset-bottom));animation:up .22s ease}
+@keyframes up{from{transform:translateY(40px);opacity:.6}}
+.grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 10px}
+.sheet h2{margin-bottom:12px}
+.sec{margin:16px 0}
+.garden{background:var(--garden);border-radius:22px;padding:12px 8px;border:1px solid var(--line)}
+.gweek{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.gweek .wd{text-align:center;font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.05em;padding-bottom:2px}
+.plot{position:relative;text-align:center;cursor:pointer;border-radius:12px}
+.plot svg{width:100%;height:auto;display:block}
+.plot .dn{position:absolute;top:2px;left:5px;font-size:10.5px;color:var(--muted)}
+.plot.today{background:color-mix(in srgb,var(--card) 70%,transparent)}
+.plot.future{opacity:.35;cursor:default}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center}
+.stat b{display:block;font-family:ui-serif,"New York",Georgia,serif;font-weight:500;font-size:26px;line-height:1.1}
+.stat span{font-size:12.5px;color:var(--muted)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal .wd{text-align:center;font-size:11px;color:var(--muted);font-weight:600}
+.cday{aspect-ratio:1;border-radius:10px;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13px;position:relative;border:1px solid transparent}
+.cday.god{background:var(--sage-soft)}.cday.plaget{background:var(--mustard-soft)}.cday.toff{background:var(--terra-soft)}
+.cday.blank{background:transparent}
+.cday.today{border-color:var(--ink)}
+.cday .dots{display:flex;gap:2px;height:5px;margin-top:2px}
+.cday .dots i{width:4px;height:4px;border-radius:50%;background:var(--mauve)}
+.cday .bl{position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:14px;height:2.5px;border-radius:2px;background:var(--terra)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--muted);margin-top:12px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:5px}
+.kv{width:100%;border-collapse:collapse;font-size:15.5px}
+.kv td{padding:9px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.kv td:last-child{text-align:right;font-weight:500;padding-left:12px}
+.kv tr:last-child td{border-bottom:0}
+.bar{height:8px;border-radius:4px;background:var(--bg);overflow:hidden;margin-top:5px}
+.bar i{display:block;height:100%;background:var(--mauve)}
+.note{font-size:13.5px;color:var(--muted);margin-top:8px}
+.dayblock{padding:12px 0;border-bottom:1px solid var(--line);font-size:15px}
+.dayblock:last-child{border-bottom:0}
+.dayblock h3{font-size:16px;margin:0 0 4px;display:flex;justify-content:space-between;gap:8px}
+.dayblock h3 em{font-style:normal;font-family:-apple-system,sans-serif;font-size:13px;font-weight:600;padding:2px 8px;border-radius:8px}
+.dayblock ul{margin:4px 0 0;padding-left:18px}
+.mini{display:flex;flex-wrap:wrap;gap:3px}
+.mini i{width:16px;height:16px;border-radius:4px;background:var(--bg);border:1px solid var(--line)}
+.mini i.god{background:var(--sage);border-color:var(--sage)}.mini i.plaget{background:var(--mustard);border-color:var(--mustard)}.mini i.toff{background:var(--terra);border-color:var(--terra)}.mini i.lg{background:var(--stone);border-color:var(--stone)}
+.field{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.field input{width:120px;text-align:center}
+.safety{font-size:14px;color:var(--muted);border-left:3px solid var(--terra);padding:4px 0 4px 12px;margin:16px 0}
+.hidden{display:none!important}
+.printhead{display:none}
+@media print{
+  body{background:#fff;color:#000;padding:0;font-size:12pt}
+  nav.tabs,.no-print,.toast,.overlay{display:none!important}
+  main{max-width:none;padding:0}
+  .card{box-shadow:none;border:1px solid #ccc;break-inside:avoid;background:#fff}
+  .printhead{display:block}
+  .dayblock{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<main>
+  <section id="tab-idag"></section>
+  <section id="tab-hagen" class="hidden"></section>
+  <section id="tab-oversikt" class="hidden"></section>
+  <section id="tab-legen" class="hidden"></section>
+</main>
+
+<nav class="tabs no-print"><div class="in">
+  <button data-action="tab" data-v="idag" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>I dag</button>
+  <button data-action="tab" data-v="hagen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 21v-9"/><path d="M12 12c-4 0-6-2.5-6-6 3.5 0 6 2 6 6zM12 15c3.5 0 5.5-2 5.5-5.5-3.5 0-5.5 2-5.5 5.5z"/><path d="M5 21h14"/></svg>Hagen</button>
+  <button data-action="tab" data-v="oversikt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Oversikt</button>
+  <button data-action="tab" data-v="legen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7 3.5h7l4 4V20a.5.5 0 0 1-.5.5h-10A.5.5 0 0 1 7 20z"/><path d="M14 3.5V8h4M10 13h5M10 16.5h5"/></svg>Til legen</button>
+</div></nav>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div id="modal"></div>
+<input type="file" id="importFile" accept="application/json,.json" class="hidden">
+
+<script>
+'use strict';
+/* ---------- Konstanter ---------- */
+const KEY='symptomhagen.v1';
+const SYMPTOMS=['Tarmtrykk','Plutselig utmattelse','Hodepine','Kvalme','Svimmelhet','Magesmerter'];
+const WHEN=[['naa','Nå'],['morgen','Morgen'],['dag','Dag'],['kveld','Kveld'],['natt','Natt']];
+const SLOTNAME={morgen:'Morgen',dag:'Dag',kveld:'Kveld',natt:'Natt'};
+const MOODS=[['god','God dag'],['plaget','Litt plaget'],['toff','Tøff dag']];
+const MOODNAME={god:'God dag',plaget:'Litt plaget',toff:'Tøff dag'};
+const BLEED=[['ingen','Ingen'],['spotting','Spotting'],['blodning','Blødning']];
+const BLEEDNAME={ingen:'Ingen',spotting:'Spotting',blodning:'Blødning'};
+const STOOL=[['normal','Normal'],['hard','Hard'],['los','Løs']];
+const STOOLNAME={normal:'Normal',hard:'Hard',los:'Løs'};
+const RELIEF={ja:'Ja',nei:'Nei',vet:'Vet ikke'};
+const DURATION=[['u15','Under 15 min'],['15-30','15–30 min'],['30-60','30–60 min'],['1-2t','1–2 timer'],['o2t','Over 2 timer']];
+const DURNAME=Object.fromEntries(DURATION);
+const WD=['Ma','Ti','On','To','Fr','Lø','Sø'];
+
+/* ---------- Hjelpere ---------- */
+const pad=n=>String(n).padStart(2,'0');
+const keyOf=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const dateOf=k=>{const[y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d,12)};
+const addDays=(k,n)=>{const d=dateOf(k);d.setDate(d.getDate()+n);return keyOf(d)};
+const todayKey=()=>keyOf(new Date());
+const nowHM=()=>{const d=new Date();return pad(d.getHours())+':'+pad(d.getMinutes())};
+const toMin=hm=>{const[h,m]=hm.split(':').map(Number);return h*60+m};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>(Math.round(n*10)/10).toLocaleString('nb-NO');
+const longDate=k=>dateOf(k).toLocaleDateString('nb-NO',{weekday:'long',day:'numeric',month:'long'});
+const shortDate=k=>dateOf(k).toLocaleDateString('nb-NO',{day:'numeric',month:'short'});
+const mondayOf=k=>{const d=dateOf(k);d.setDate(d.getDate()-((d.getDay()+6)%7));return keyOf(d)};
+const range=(a,b)=>{const out=[];for(let k=a;k<=b;k=addDays(k,1))out.push(k);return out};
+const slotFor=h=>h>=5&&h<10?'morgen':h>=10&&h<17?'dag':h>=17&&h<23?'kveld':'natt';
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+/* ---------- Tilstand og lagring (kun lokalt) ---------- */
+const defaults=()=>({settings:{waterGoal:8,pillTime:'08:00',reminderTime:'20:30',pillName:'',onboarded:false,firstUse:null,lastBackup:null,lastBackupPrompt:null},days:{}});
+const blank=()=>({mood:null,pill:null,water:0,bleeding:null,constipated:null,stools:[],episodes:[],note:''});
+let S=defaults();
+const getDay=k=>S.days[k]||blank();
+const mut=k=>(S.days[k]||(S.days[k]=blank()));
+const logged=d=>!!(d&&(d.mood||d.pill||d.water||d.bleeding||d.constipated!=null||d.stools.length||d.episodes.length||d.note));
+
+function idb(){return new Promise((res,rej)=>{if(!window.indexedDB)return rej(new Error('no idb'));const r=indexedDB.open('symptomhagen',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function idbGet(){const db=await idb();return new Promise((res,rej)=>{const q=db.transaction('kv').objectStore('kv').get('state');q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
+async function idbSet(v){const db=await idb();return new Promise((res,rej)=>{const t=db.transaction('kv','readwrite');t.objectStore('kv').put(v,'state');t.oncomplete=res;t.onerror=()=>rej(t.error)})}
+function save(){
+  for(const k of Object.keys(S.days)){if(!logged(S.days[k]))delete S.days[k]}
+  const json=JSON.stringify(S);
+  try{localStorage.setItem(KEY,json)}catch(e){}
+  idbSet(json).catch(()=>{});
+}
+function hydrate(raw){
+  const p=typeof raw==='string'?JSON.parse(raw):raw;
+  const d=defaults();
+  const days={};
+  for(const [k,v] of Object.entries(p.days||{})){days[k]=Object.assign(blank(),v)}
+  return {settings:Object.assign(d.settings,p.settings||{}),days};
+}
+async function load(){
+  let json=null;
+  try{json=await idbGet()}catch(e){}
+  if(!json){try{json=localStorage.getItem(KEY)}catch(e){}}
+  if(json){try{S=hydrate(json)}catch(e){}}
+}
+
+/* ---------- UI-tilstand ---------- */
+let tab='idag', cur=todayKey(), weekOff=0, monthOff=0, docPeriod='28', epDraft=null, toastT=null;
+const recentMsg=[];
+
+/* ---------- Meldinger (konkrete, uten klisjeer) ---------- */
+function pick(arr){
+  const fresh=arr.filter(m=>!recentMsg.includes(m));
+  const pool=fresh.length?fresh:arr;
+  const m=pool[Math.floor(Math.random()*pool.length)];
+  recentMsg.push(m);if(recentMsg.length>10)recentMsg.shift();
+  return m;
+}
+const weekOf=k=>range(mondayOf(k),addDays(mondayOf(k),6));
+const totalLogged=()=>Object.values(S.days).filter(logged).length;
+function pillStreak(k){let n=0;while(getDay(k).pill){n++;k=addDays(k,-1)}return n}
+function moodMsg(k,v){
+  const total=totalLogged();
+  const wk=weekOf(k).filter(x=>x<=todayKey()&&logged(getDay(x))).length;
+  const o=[];
+  if(total>1&&total%5===0)o.push(`Dag nummer ${total} i loggen. Legen kommer til å elske deg.`);
+  if(v==='god')o.push(`God dag notert. ${wk} av 7 dager logget denne uka.`,'Gode dager er også data. Det er dem legen sammenligner med.','Notert. Ny plante i hagen.','Registrert. Vann den, så blomstrer den.');
+  if(v==='plaget')o.push('Notert. Legg til en episode hvis du orker, ellers holder dette.',`${wk} dager logget denne uka. Mønsteret blir tydeligere for hver gang.`,'Registrert. Kort er helt greit.');
+  if(v==='toff')o.push('Tøff dag, men nå er den på papiret. Det teller.','Registrert. Den får en blomst, den også.','Notert. Du trenger ikke skrive en roman, dette holder.','Lagret. Resten av dagen kan du bare hvile.');
+  return pick(o);
+}
+function waterMsg(k,w){
+  const g=S.settings.waterGoal;
+  if(w===g)return pick([`${g} glass. Hagen er i full blomst.`,`Mål nådd: ${g} glass. Blomsten er ute.`,`${g} av ${g}. Planten har det bedre enn de fleste i dag.`]);
+  const others=weekOf(k).filter(x=>x!==k).map(x=>getDay(x).water);
+  const max=Math.max(0,...others);
+  if(max>0&&w===max+1&&w<g)return `${w} glass. Mest denne uka.`;
+  if(k===todayKey()&&new Date().getHours()<12&&w===3)return 'Tre glass før lunsj. Uvanlig sterk start.';
+  if(getDay(k).mood&&w===Math.ceil(g*0.6))return 'Knoppen er ute. Et par glass til, så blomstrer den.';
+  return null;
+}
+function pillMsg(k){
+  const s=pillStreak(k);
+  if(s>=7&&s%7===0)return `${s} dager på rad. Stien begynner å bli lang.`;
+  if(s===3)return 'Tre dager på rad. Det er en sti nå, ikke bare steiner.';
+  return `Pillen er registrert kl. ${getDay(k).pill}.`;
+}
+function toast(m){if(!m)return;const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),3200)}
+
+/* ---------- Planter (SVG) ---------- */
+function flower(type,cx,top){
+  if(type==='plaget')return `<path d="M${cx-7} ${top} Q${cx-9} ${top-12} ${cx-4.5} ${top-15} L${cx} ${top-10} L${cx+4.5} ${top-15} Q${cx+9} ${top-12} ${cx+7} ${top} Q${cx} ${top+4} ${cx-7} ${top}Z" fill="var(--terra)"/>`;
+  if(type==='toff'){let g='';for(let i=0;i<7;i++){g+=`<ellipse cx="${cx+(i%2?1.8:-1.8)}" cy="${top-1-i*3.6}" rx="${3.2-i*.2}" ry="2.4" fill="var(--mauve)"/>`}return g}
+  let g='';const cy=top-7;
+  for(let i=0;i<8;i++)g+=`<ellipse cx="${cx}" cy="${cy-6.5}" rx="3" ry="6" fill="var(--petal)" stroke="var(--soil-soft)" stroke-width=".5" transform="rotate(${i*45} ${cx} ${cy})"/>`;
+  return g+`<circle cx="${cx}" cy="${cy}" r="3.8" fill="var(--mustard)"/>`;
+}
+function bud(type,cx,top){
+  const c=type==='plaget'?'var(--terra)':type==='toff'?'var(--mauve)':'var(--petal)';
+  return `<ellipse cx="${cx}" cy="${top-4}" rx="3.6" ry="5.5" fill="${c}" stroke="var(--leaf)" stroke-width="1"/>`;
+}
+function plant(type,st,cx,base){
+  if(st<0)return '';
+  if(st===0)return `<ellipse cx="${cx}" cy="${base-1}" rx="8" ry="3" fill="var(--soil)"/><circle cx="${cx}" cy="${base-4}" r="2.4" fill="var(--mustard)"/>`;
+  const h=[0,10,24,36,42][st],top=base-h;
+  let g=`<path d="M${cx} ${base} Q${cx+2.5} ${base-h/2} ${cx} ${top}" stroke="var(--stem)" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  const ly=base-Math.min(h*.45,14);
+  g+=`<ellipse cx="${cx-6}" cy="${ly}" rx="6.5" ry="2.8" fill="var(--leaf)" transform="rotate(-28 ${cx-6} ${ly})"/>`;
+  g+=`<ellipse cx="${cx+6}" cy="${ly-3}" rx="6.5" ry="2.8" fill="var(--leaf)" transform="rotate(28 ${cx+6} ${ly-3})"/>`;
+  if(st===3)g+=bud(type,cx,top);
+  if(st===4)g+=flower(type,cx,top);
+  return g;
+}
+function little(x,y,c){let g='';for(let i=0;i<5;i++){const a=i*72*Math.PI/180;g+=`<circle cx="${(x+Math.cos(a)*2.6).toFixed(1)}" cy="${(y+Math.sin(a)*2.6).toFixed(1)}" r="1.9" fill="${c}"/>`}return g+`<circle cx="${x}" cy="${y}" r="1.3" fill="var(--mustard)"/>`}
+function stage(d){
+  if(!logged(d))return -1;
+  if(!d.mood)return 0;
+  const w=d.water,g=S.settings.waterGoal;
+  return w>=g?4:w>=Math.ceil(g*.6)?3:w>0?2:1;
+}
+function plotSVG(k){
+  const d=getDay(k),st=stage(d),base=86;
+  let g=`<ellipse cx="50" cy="${base+2}" rx="34" ry="7.5" fill="var(--soil-soft)" ${st<0?'fill-opacity=".55" stroke="var(--soil-soft)" stroke-dasharray="3 3"':''}/>`;
+  if(d.pill){
+    const p=getDay(addDays(k,-1)).pill,n=getDay(addDays(k,1)).pill;
+    const x1=p?0:30,x2=n?100:70;
+    g+=`<rect x="${x1}" y="99" width="${x2-x1}" height="7" rx="3.5" fill="var(--stone)" opacity=".35"/>`;
+    for(let x=x1+6;x<=x2-4;x+=12)g+=`<ellipse cx="${x}" cy="102.5" rx="3.6" ry="2.5" fill="var(--stone)"/>`;
+  }
+  const n=Math.min(d.episodes.length,3),spots=[[24,base-2],[77,base-3],[17,base-9]];
+  for(let i=0;i<n;i++)g+=little(spots[i][0],spots[i][1],i%2?'var(--terra)':'var(--mauve)');
+  g+=`<g transform="translate(50 ${base}) scale(1.2) translate(-50 -${base})">${plant(d.mood||'god',st,50,base)}</g>`;
+  return `<svg viewBox="0 0 100 110" aria-hidden="true">${g}</svg>`;
+}
+const moodIcon=v=>`<svg viewBox="0 0 40 40" aria-hidden="true"><g transform="translate(0 4)">${v==='god'?flower('god',20,26):v==='plaget'?flower('plaget',20,30):flower('toff',20,34)}</g></svg>`;
+
+/* ---------- I dag ---------- */
+function backupDue(){
+  const s=S.settings;if(!totalLogged())return false;
+  const ref=Math.max(s.lastBackup||0,s.lastBackupPrompt||0,s.firstUse||0);
+  return Date.now()-ref>30*864e5;
+}
+function renderToday(){
+  const d=getDay(cur),isToday=cur===todayKey(),s=S.settings;
+  const due=isToday&&!d.pill&&nowHM()>s.pillTime;
+  const g=s.waterGoal;
+  let glasses='';for(let i=0;i<Math.max(g,d.water);i++)glasses+=`<i class="glass ${i<d.water?'full':''}"></i>`;
+  const msg=!logged(d)?(isToday?'Tomt bed. Ett trykk, så er det plantet.':'Ledig jord. Du kan fortsatt logge denne dagen.'):!d.mood?'Frøet er sådd. Velg hvordan dagen var, så spirer det.':stage(d)<4?`${Math.max(g-d.water,0)} glass til full blomst.`:'Full blomst.';
+  document.getElementById('tab-idag').innerHTML=`
+  <header class="todayhead">
+    <div class="side"><button class="iconbtn" data-action="day" data-v="-1" aria-label="Forrige dag">‹</button></div>
+    <div class="when"><h1>${isToday?'I dag':esc(longDate(cur).split(' ')[0].replace(/^./,c=>c.toUpperCase()))}</h1><div class="sub">${esc(isToday?longDate(cur):shortDate(cur))}</div></div>
+    <div class="side r"><button class="iconbtn" data-action="day" data-v="1" aria-label="Neste dag" ${isToday?'disabled':''}>›</button>
+    <button class="iconbtn" data-action="settings" aria-label="Innstillinger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div>
+  </header>
+  ${backupDue()?`<div class="banner"><div><b>Tid for backup.</b> Dataene finnes bare på denne telefonen. Lagre en kopi et trygt sted.</div><div class="row"><button class="btn small primary" data-action="export">Ta backup</button><button class="btn small ghost" data-action="backup-later">Senere</button></div></div>`:''}
+  <div class="hero">${plotSVG(cur)}<div class="msg">${esc(msg)}</div></div>
+
+  <div class="card">
+    <button class="btn pill ${d.pill?'taken':due?'due':''}" data-action="pill">
+      ${d.pill?`✓ Pillen tatt kl. ${esc(d.pill)}`:due?'💊 Ikke registrert ennå':'Tatt pillen 💊'}
+    </button>
+    ${d.pill?'<div class="note" style="text-align:center">Trykk igjen for å angre.</div>':due?`<div class="note" style="text-align:center">Fast tid er kl. ${esc(s.pillTime)}. Glemt pille? Sjekk pakningsvedlegget eller spør på apoteket.</div>`:''}
+  </div>
+
+  <div class="card">
+    <p class="label">Vann <span>mål ${g} glass</span></p>
+    <div class="water">
+      <button class="btn round" data-action="water" data-v="-1" aria-label="Ett glass mindre" ${d.water?'':'disabled'}>−</button>
+      <div class="count">${d.water}<small>${d.water===1?'glass':'glass'}</small></div>
+      <button class="btn round primary" data-action="water" data-v="1" aria-label="Ett glass til">+</button>
+    </div>
+    <div class="glasses">${glasses}</div>
+  </div>
+
+  <div class="card">
+    <p class="label">Hvordan har dagen vært?</p>
+    <div class="row">${MOODS.map(([v,l])=>`<button class="btn mood ${d.mood===v?'on':''}" data-action="mood" data-v="${v}">${moodIcon(v)}${l}</button>`).join('')}</div>
+  </div>
+
+  <div class="card">
+    <p class="label">Episoder <span>${d.episodes.length||''}</span></p>
+    ${d.episodes.length?`<ul class="list">${d.episodes.map(e=>`<li class="ep" data-action="ep-edit" data-v="${e.id}"><div><div>${esc(e.symptoms.join(', ')||'Episode')}</div><div class="meta">${esc(e.at||SLOTNAME[e.slot]||'')}${e.duration?` · ${DURNAME[e.duration].toLowerCase()}`:''}${e.relief?` · bedre etter do: ${RELIEF[e.relief].toLowerCase()}`:''}</div></div>${e.severity?`<span class="sev" aria-label="Styrke ${e.severity}">${[1,2,3,4,5].map(i=>`<i class="${i<=e.severity?'f':''}"></i>`).join('')}</span>`:''}</li>`).join('')}</ul>`:''}
+    <button class="btn" data-action="ep-new" style="width:100%;margin-top:${d.episodes.length?10:0}px">+ Ny episode</button>
+  </div>
+
+  <div class="card">
+    <p class="label">Avføring <span>${d.stools.length?`${d.stools.length} ${isToday?'i dag':'denne dagen'}`:''}</span></p>
+    <div class="field" style="padding-top:0"><label for="stoolTime">Klokkeslett<div class="note" style="margin:2px 0 0">Endre for å føre et tidligere besøk</div></label><input id="stoolTime" type="time" value="${isToday?nowHM():''}"></div>
+    <div class="seg" style="margin-top:10px">${STOOL.map(([v,l])=>`<button class="btn" data-action="stool" data-v="${v}">${l}</button>`).join('')}</div>
+    ${d.stools.length?`<div class="stools">${d.stools.map((x,i)=>`<span class="tag">${STOOLNAME[x.type]} ${esc(x.at)}<button data-action="stool-del" data-v="${i}" aria-label="Fjern">×</button></span>`).join('')}</div>`:''}
+    <p class="label" style="margin-top:18px">Forstoppet i dag?</p>
+    <div class="seg"><button class="btn ${d.constipated===true?'on terra':''}" data-action="constip" data-v="ja">Ja</button><button class="btn ${d.constipated===false?'on':''}" data-action="constip" data-v="nei">Nei</button></div>
+  </div>
+
+  <div class="card">
+    <p class="label">Blødning</p>
+    <div class="seg">${BLEED.map(([v,l])=>`<button class="btn ${d.bleeding===v?(v==='ingen'?'on':'on terra'):''}" data-action="bleed" data-v="${v}">${l}</button>`).join('')}</div>
+  </div>
+
+  <div class="card">
+    <p class="label">Notat for dagen <span>valgfritt</span></p>
+    <textarea id="daynote" placeholder="Mat, stress, trening, søvn …">${esc(d.note)}</textarea>
+  </div>`;
+  document.getElementById('daynote').addEventListener('input',e=>{mut(cur).note=e.target.value;clearTimeout(window._nt);window._nt=setTimeout(save,400)});
+  document.getElementById('daynote').addEventListener('blur',()=>{save();if(tab==='idag'){const h=document.querySelector('.hero');h.outerHTML=`<div class="hero">${plotSVG(cur)}<div class="msg">${esc(document.querySelector('.hero .msg').textContent)}</div></div>`}});
+}
+
+/* ---------- Episode-ark ---------- */
+function openEpisode(id){
+  const e=id?getDay(cur).episodes.find(x=>x.id===id):null;
+  epDraft=e?JSON.parse(JSON.stringify(e)):{id:null,symptoms:[],severity:null,when:'naa',slot:null,at:null,duration:null,relief:null,note:''};
+  if(e)epDraft.when=e.at&&cur===todayKey()?'keep':e.slot;
+  renderEpisode();
+}
+function renderEpisode(){
+  const e=epDraft;
+  document.getElementById('modal').innerHTML=`<div class="overlay" data-action="close-bg"><div class="sheet" role="dialog" aria-label="Episode">
+    <div class="grab"></div>
+    <h2>${e.id?'Endre episode':'Ny episode'}</h2>
+    <div class="sec"><p class="label">Hva kjente du?</p><div class="wrap">${SYMPTOMS.map(s=>`<button class="chip ${e.symptoms.includes(s)?'on':''}" data-action="ep-sym" data-v="${esc(s)}">${s}</button>`).join('')}</div></div>
+    <div class="sec"><p class="label">Styrke <span>1 = lite, 5 = verst</span></p><div class="seg">${[1,2,3,4,5].map(n=>`<button class="btn ${e.severity===n?'on terra':''}" data-action="ep-sev" data-v="${n}">${n}</button>`).join('')}</div></div>
+    <div class="sec"><p class="label">Når?</p><div class="wrap">${e.when==='keep'?`<button class="chip on" data-action="ep-when" data-v="keep">Kl. ${esc(e.at)}</button>`:''}${WHEN.filter(([v])=>v!=='naa'||cur===todayKey()).map(([v,l])=>`<button class="chip ${e.when===v?'on':''}" data-action="ep-when" data-v="${v}">${l}</button>`).join('')}</div></div>
+    <div class="sec"><p class="label">Hvor lenge varte det?</p><div class="wrap">${DURATION.map(([v,l])=>`<button class="chip ${e.duration===v?'on':''}" data-action="ep-dur" data-v="${v}">${l}</button>`).join('')}</div></div>
+    <div class="sec"><p class="label">Ble det bedre etter toalettbesøk?</p><div class="seg">${Object.entries(RELIEF).map(([v,l])=>`<button class="btn ${e.relief===v?'on':''}" data-action="ep-rel" data-v="${v}">${l}</button>`).join('')}</div></div>
+    <div class="sec"><p class="label">Notat <span>valgfritt</span></p><textarea id="epnote" placeholder="Hva skjedde rett før? Mat, stress, trening …">${esc(e.note)}</textarea></div>
+    <div class="row" style="margin-top:8px">${e.id?'<button class="btn danger" data-action="ep-del" style="flex:.6">Slett</button>':'<button class="btn ghost" data-action="close" style="flex:.6">Avbryt</button>'}<button class="btn primary" data-action="ep-save">Lagre</button></div>
+  </div></div>`;
+  document.getElementById('epnote').addEventListener('input',ev=>{epDraft.note=ev.target.value});
+}
+function saveEpisode(){
+  const e=epDraft,d=mut(cur);
+  if(e.when==='naa'){e.at=nowHM();e.slot=slotFor(new Date().getHours())}
+  else if(e.when!=='keep'){e.slot=e.when;e.at=null}
+  delete e.when;
+  if(!e.id){e.id=uid();d.episodes.push(e)}else{d.episodes=d.episodes.map(x=>x.id===e.id?e:x)}
+  save();closeModal();render();
+  toast(pick(['Episoden er lagret.','Lagret. Den havner i oversikten til legen.','Notert, med klokkeslett og alt.']));
+}
+
+/* ---------- Hagen ---------- */
+function season(m){return m<=1||m===11?['Vinterhage','Selv om vinteren gror det her.']:m<=4?['Vårhage','Alt spirer.']:m<=7?['Sommerhage','Lange, lyse dager.']:['Høsthage','Høstfarger i bedet.']}
+function renderGarden(){
+  const t=todayKey(),start=addDays(mondayOf(t),-28),end=addDays(mondayOf(t),6);
+  const keys=range(start,end);
+  const [title,sub]=season(new Date().getMonth());
+  let weeks='';
+  for(let w=0;w<5;w++){
+    weeks+=`<div class="gweek">${keys.slice(w*7,w*7+7).map(k=>`<div class="plot ${k===t?'today':''} ${k>t?'future':''}" ${k<=t?`data-action="goto" data-v="${k}"`:''}><span class="dn">${dateOf(k).getDate()}</span>${k<=t?plotSVG(k):`<svg viewBox="0 0 100 110"><ellipse cx="50" cy="88" rx="34" ry="7.5" fill="var(--soil-soft)" fill-opacity=".4"/></svg>`}</div>`).join('')}</div>`;
+  }
+  const all=Object.entries(S.days).filter(([,d])=>logged(d));
+  const blooms=all.filter(([,d])=>stage(d)===4).length;
+  let path=0,best=0;for(const k of range(all.length?all.map(a=>a[0]).sort()[0]:t,t)){if(getDay(k).pill){path++;best=Math.max(best,path)}else path=0}
+  document.getElementById('tab-hagen').innerHTML=`
+  <header class="top"><div><h1>${title}</h1><div class="sub">${sub} Siste fem uker.</div></div></header>
+  <div class="garden">
+    <div class="gweek">${WD.map(w=>`<div class="wd">${w}</div>`).join('')}</div>
+    ${weeks}
+  </div>
+  <div class="stats">
+    <div class="stat"><b>${all.length}</b><span>dager plantet</span></div>
+    <div class="stat"><b>${blooms}</b><span>i full blomst</span></div>
+    <div class="stat"><b>${pillStreak(t)||pillStreak(addDays(t,-1))}</b><span>steiner på rad</span></div>
+  </div>
+  <div class="card">
+    <p class="label">Slik gror hagen</p>
+    <table class="kv">
+      <tr><td>Logget dag</td><td>et frø spirer</td></tr>
+      <tr><td>Vannglass</td><td>planten vokser, full blomst ved ${S.settings.waterGoal}</td></tr>
+      <tr><td>Pillen tatt</td><td>en stein, sammenhengende dager blir en sti</td></tr>
+      <tr><td>Episoder</td><td>små blomster i bedet</td></tr>
+      <tr><td>God / plaget / tøff</td><td>prestekrage / tulipan / lavendel</td></tr>
+    </table>
+    <p class="note">Glemte dager er bare ledig jord. Ingenting visner. Trykk på en dag for å logge den i etterkant.${best>2?` Lengste sti så langt: ${best} dager.`:''}</p>
+  </div>`;
+}
+
+/* ---------- Statistikk ---------- */
+function statsFor(keys){
+  const days=keys.map(k=>[k,getDay(k)]).filter(([,d])=>logged(d));
+  const eps=days.flatMap(([k,d])=>d.episodes.map(e=>({...e,k})));
+  const sym={};eps.forEach(e=>e.symptoms.forEach(s=>sym[s]=(sym[s]||0)+1));
+  const symSorted=Object.entries(sym).sort((a,b)=>b[1]-a[1]);
+  const sev=eps.filter(e=>e.severity);
+  const slot={morgen:0,dag:0,kveld:0,natt:0};eps.forEach(e=>{if(e.slot)slot[e.slot]++});
+  const rel={ja:0,nei:0,vet:0};eps.forEach(e=>{if(e.relief)rel[e.relief]++});
+  const dur=Object.fromEntries(DURATION.map(([v])=>[v,0]));eps.forEach(e=>{if(e.duration)dur[e.duration]++});
+  const moods={god:0,plaget:0,toff:0};days.forEach(([,d])=>{if(d.mood)moods[d.mood]++});
+  const per=list=>list.length?list.reduce((a,[,d])=>a+d.episodes.length,0)/list.length:null;
+  const bleedDays=days.filter(([,d])=>d.bleeding==='spotting'||d.bleeding==='blodning');
+  const nonBleed=days.filter(([,d])=>!(d.bleeding==='spotting'||d.bleeding==='blodning'));
+  const conDays=days.filter(([,d])=>d.constipated===true),nonCon=days.filter(([,d])=>d.constipated!==true);
+  const stools={normal:0,hard:0,los:0};let stoolTotal=0;days.forEach(([,d])=>d.stools.forEach(s=>{stools[s.type]++;stoolTotal++}));
+  const stoolDays=days.filter(([,d])=>d.stools.length).length;
+  const pt=toMin(S.settings.pillTime);
+  const pastKeys=keys.filter(k=>k<=todayKey());
+  const pills=pastKeys.filter(k=>getDay(k).pill);
+  const late=pills.filter(k=>toMin(getDay(k).pill)-pt>60).length;
+  const waterDays=days.filter(([,d])=>d.water>0);
+  return {days,eps,dur,symSorted,sevAvg:sev.length?sev.reduce((a,e)=>a+e.severity,0)/sev.length:null,slot,rel,moods,
+    bleedDays:bleedDays.length,perBleed:per(bleedDays),perNonBleed:per(nonBleed),nonBleed:nonBleed.length,
+    conDays:conDays.length,perCon:per(conDays),perNonCon:per(nonCon),nonCon:nonCon.length,
+    stools,stoolTotal,stoolPerDay:stoolDays?stoolTotal/stoolDays:null,
+    pills:pills.length,pillDays:pastKeys.length,late,
+    waterAvg:waterDays.length?waterDays.reduce((a,[,d])=>a+d.water,0)/waterDays.length:null};
+}
+
+/* ---------- Oversikt ---------- */
+function renderOverview(){
+  const t=todayKey(),mon=addDays(mondayOf(t),weekOff*7),keys=range(mon,addDays(mon,6));
+  const st=statsFor(keys);
+  const top=st.symSorted[0];
+  const ref=new Date();ref.setDate(1);ref.setMonth(ref.getMonth()+monthOff);
+  const first=keyOf(ref),lastD=new Date(ref.getFullYear(),ref.getMonth()+1,0),last=keyOf(lastD);
+  const lead=(dateOf(first).getDay()+6)%7;
+  let cells=WD.map(w=>`<div class="wd">${w}</div>`).join('')+'<div class="cday blank"></div>'.repeat(lead);
+  for(const k of range(first,last)){const d=getDay(k);cells+=`<div class="cday ${d.mood||''} ${k===t?'today':''}" ${k<=t?`data-action="goto" data-v="${k}"`:''}>${dateOf(k).getDate()}<span class="dots">${'<i></i>'.repeat(Math.min(d.episodes.length,3))}</span>${d.bleeding==='spotting'||d.bleeding==='blodning'?'<span class="bl"></span>':''}</div>`}
+  const wlabel=weekOff===0?'Denne uka':weekOff===-1?'Forrige uke':`Uke fra ${shortDate(mon)}`;
+  document.getElementById('tab-oversikt').innerHTML=`
+  <header class="top"><div><h1>Oversikt</h1><div class="sub">Nøkterne tall, ingen pynt.</div></div></header>
+  <div class="card">
+    <div class="top" style="margin:0 0 6px"><button class="iconbtn" data-action="week" data-v="-1" aria-label="Forrige uke">‹</button><div style="text-align:center"><h2>${wlabel}</h2><div class="sub">${shortDate(mon)} – ${shortDate(addDays(mon,6))}</div></div><button class="iconbtn" data-action="week" data-v="1" aria-label="Neste uke" ${weekOff>=0?'disabled':''}>›</button></div>
+    <div class="stats" style="margin-top:6px">
+      <div class="stat"><b>${st.moods.god}</b><span>gode dager</span></div>
+      <div class="stat"><b>${st.moods.plaget}</b><span>litt plaget</span></div>
+      <div class="stat"><b>${st.moods.toff}</b><span>tøffe dager</span></div>
+    </div>
+    <table class="kv" style="margin-top:10px">
+      <tr><td>Episoder</td><td>${st.eps.length}</td></tr>
+      <tr><td>Hyppigste symptom</td><td>${top?`${esc(top[0])} (${top[1]})`:'–'}</td></tr>
+      <tr><td>Vanligste tidspunkt</td><td>${st.eps.length?SLOTNAME[Object.entries(st.slot).sort((a,b)=>b[1]-a[1])[0][0]]:'–'}</td></tr>
+      <tr><td>Snitt vann</td><td>${st.waterAvg!=null?fmt(st.waterAvg)+' glass':'–'}</td></tr>
+      <tr><td>Pillen tatt</td><td>${st.pills} av ${st.pillDays}</td></tr>
+      <tr><td>Dager med forstoppelse</td><td>${st.conDays}</td></tr>
+      <tr><td>Dager logget</td><td>${st.days.length} av ${st.pillDays}</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="top" style="margin:0 0 8px"><button class="iconbtn" data-action="month" data-v="-1" aria-label="Forrige måned">‹</button><h2 style="text-transform:capitalize">${ref.toLocaleDateString('nb-NO',{month:'long',year:'numeric'})}</h2><button class="iconbtn" data-action="month" data-v="1" aria-label="Neste måned" ${monthOff>=0?'disabled':''}>›</button></div>
+    <div class="cal">${cells}</div>
+    <div class="legend"><span><i style="background:var(--sage-soft)"></i>God</span><span><i style="background:var(--mustard-soft)"></i>Plaget</span><span><i style="background:var(--terra-soft)"></i>Tøff</span><span><i style="background:var(--mauve);border-radius:50%;width:6px;height:6px"></i>Episode</span><span><i style="background:var(--terra);height:3px"></i>Blødning</span></div>
+  </div>`;
+}
+
+/* ---------- Til legen ---------- */
+function docKeys(){
+  const t=todayKey();
+  if(docPeriod==='all'){const ks=Object.keys(S.days).filter(k=>logged(S.days[k])).sort();return range(ks[0]||t,t)}
+  return range(addDays(t,-(+docPeriod-1)),t);
+}
+function renderDoctor(){
+  const keys=docKeys(),st=statsFor(keys),n=st.eps.length;
+  const pct=x=>n?Math.round(x/n*100):0;
+  const cmp=(a,an,b,bn)=>a==null&&b==null?'–':`${a!=null?fmt(a):'–'} (${an} d) vs ${b!=null?fmt(b):'–'} (${bn} d)`;
+  const dayList=st.days.map(([k,d])=>{
+    const bits=[];
+    if(d.pill)bits.push(`Pille kl. ${esc(d.pill)}`);
+    if(d.water)bits.push(`${d.water} glass vann`);
+    if(d.bleeding)bits.push(`Blødning: ${BLEEDNAME[d.bleeding].toLowerCase()}`);
+    if(d.constipated!=null)bits.push(d.constipated?'Forstoppet':'Ikke forstoppet');
+    if(d.stools.length)bits.push(`Avføring: ${d.stools.map(s=>`${STOOLNAME[s.type].toLowerCase()} ${esc(s.at)}`).join(', ')}`);
+    const eps=d.episodes.map(e=>`<li>${esc(e.at?'Kl. '+e.at:SLOTNAME[e.slot]||'')}: ${esc(e.symptoms.join(', ')||'episode')}${e.severity?`, styrke ${e.severity}/5`:''}${e.duration?`, varte ${DURNAME[e.duration].toLowerCase()}`:''}${e.relief?`, bedre etter do: ${RELIEF[e.relief].toLowerCase()}`:''}${e.note?`. <i>${esc(e.note)}</i>`:''}</li>`).join('');
+    const mc=d.mood==='god'?'var(--sage-soft)':d.mood==='plaget'?'var(--mustard-soft)':'var(--terra-soft)';
+    return `<div class="dayblock"><h3><span style="text-transform:capitalize">${esc(longDate(k))}</span>${d.mood?`<em style="background:${mc}">${MOODNAME[d.mood]}</em>`:''}</h3>${bits.length?`<div class="sub">${bits.join(' · ')}</div>`:''}${eps?`<ul>${eps}</ul>`:''}${d.note?`<div class="note">Notat: ${esc(d.note)}</div>`:''}</div>`;
+  }).join('');
+  const label={'14':'2 uker','28':'4 uker','56':'8 uker','all':'Alt'};
+  document.getElementById('tab-legen').innerHTML=`
+  <header class="top"><div><h1>Til legen</h1><div class="sub no-print">Vis eller skriv ut. Ingenting er skjult.</div></div><button class="btn small no-print" data-action="print">Skriv ut / PDF</button></header>
+  <div class="printhead"><p>Symptomlogg · ${esc(shortDate(keys[0]))} – ${esc(shortDate(keys[keys.length-1]))} · laget ${esc(new Date().toLocaleDateString('nb-NO'))}. Fast pilletid${S.settings.pillName?` (${esc(S.settings.pillName)})`:''}: kl. ${esc(S.settings.pillTime)}.</p></div>
+  <div class="seg no-print" style="margin:10px 0">${Object.entries(label).map(([v,l])=>`<button class="btn small ${docPeriod===v?'on':''}" style="flex:1" data-action="doc" data-v="${v}">${l}</button>`).join('')}</div>
+  <div class="card">
+    <p class="label">Periode <span>${esc(shortDate(keys[0]))} – ${esc(shortDate(keys[keys.length-1]))} · ${keys.length} dager</span></p>
+    <div class="mini" aria-label="Kalender for perioden">${keys.map(k=>{const d=getDay(k);return `<i class="${d.mood||(logged(d)?'lg':'')}" title="${esc(shortDate(k))}"></i>`}).join('')}</div>
+    <div class="legend"><span><i style="background:var(--sage)"></i>God</span><span><i style="background:var(--mustard)"></i>Plaget</span><span><i style="background:var(--terra)"></i>Tøff</span><span><i style="background:var(--stone)"></i>Logget uten dagstype</span><span><i style="border:1px solid var(--line)"></i>Ikke logget</span></div>
+    <table class="kv" style="margin-top:8px">
+      <tr><td>Dager logget</td><td>${st.days.length} av ${keys.length}</td></tr>
+      <tr><td>Gode / plagede / tøffe dager</td><td>${st.moods.god} / ${st.moods.plaget} / ${st.moods.toff}</td></tr>
+      <tr><td>Episoder totalt</td><td>${n}${st.days.length?` (${fmt(n/st.days.length)} per logget dag)`:''}</td></tr>
+      <tr><td>Snittstyrke</td><td>${st.sevAvg!=null?fmt(st.sevAvg)+' / 5':'–'}</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <p class="label">Symptomer <span>andel av episoder</span></p>
+    ${st.symSorted.length?st.symSorted.map(([s,c])=>`<div style="margin:8px 0"><div style="display:flex;justify-content:space-between"><span>${esc(s)}</span><span>${c} · ${pct(c)} %</span></div><div class="bar"><i style="width:${pct(c)}%"></i></div></div>`).join(''):'<p class="sub">Ingen episoder i perioden.</p>'}
+    <table class="kv" style="margin-top:8px">
+      <tr><td>Tidspunkt (morgen / dag / kveld / natt)</td><td>${st.slot.morgen} / ${st.slot.dag} / ${st.slot.kveld} / ${st.slot.natt}</td></tr>
+      <tr><td>Varighet (under 15 min / 15–30 / 30–60 / 1–2 t / over 2 t)</td><td>${DURATION.map(([v])=>st.dur[v]).join(' / ')}</td></tr>
+      <tr><td>Bedre etter toalettbesøk (ja / nei / vet ikke)</td><td>${st.rel.ja} / ${st.rel.nei} / ${st.rel.vet}</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <p class="label">Sammenhenger <span>episoder per dag</span></p>
+    <table class="kv">
+      <tr><td>Blødningsdager vs andre logget dager</td><td>${cmp(st.perBleed,st.bleedDays,st.perNonBleed,st.nonBleed)}</td></tr>
+      <tr><td>Forstoppelsesdager vs andre logget dager</td><td>${cmp(st.perCon,st.conDays,st.perNonCon,st.nonCon)}</td></tr>
+    </table>
+    <p class="note">Små tall gir usikre sammenhenger. Dette er en oversikt, ikke en vurdering.</p>
+  </div>
+  <div class="card">
+    <p class="label">Mage, pille og vann</p>
+    <table class="kv">
+      <tr><td>Avføring totalt (normal / hard / løs)</td><td>${st.stoolTotal} (${st.stools.normal} / ${st.stools.hard} / ${st.stools.los})</td></tr>
+      <tr><td>Snitt avføring per dag med registrering</td><td>${st.stoolPerDay!=null?fmt(st.stoolPerDay):'–'}</td></tr>
+      <tr><td>Dager med forstoppelse</td><td>${st.conDays}</td></tr>
+      <tr><td>Blødningsdager (spotting eller blødning)</td><td>${st.bleedDays}</td></tr>
+      <tr><td>${esc(S.settings.pillName||'Pillen')} registrert tatt</td><td>${st.pills} av ${st.pillDays} dager</td></tr>
+      <tr><td>Tatt mer enn 1 t etter fast tid (kl. ${esc(S.settings.pillTime)})</td><td>${st.late}</td></tr>
+      <tr><td>Ikke registrert</td><td>${st.pillDays-st.pills}</td></tr>
+      <tr><td>Snitt vann (dager med registrering)</td><td>${st.waterAvg!=null?fmt(st.waterAvg)+' glass':'–'}</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <p class="label">Full oversikt <span>dag for dag</span></p>
+    ${dayList||'<p class="sub">Ingen registreringer i perioden.</p>'}
+  </div>`;
+}
+
+/* ---------- Innstillinger ---------- */
+async function renderSettings(){
+  const s=S.settings;
+  let persisted=null;try{persisted=navigator.storage&&navigator.storage.persisted?await navigator.storage.persisted():null}catch(e){}
+  document.getElementById('modal').innerHTML=`<div class="overlay" data-action="close-bg"><div class="sheet" role="dialog" aria-label="Innstillinger">
+    <div class="grab"></div><h2>Innstillinger</h2>
+    <div class="field"><label for="sGoal">Vannmål (glass)</label><input id="sGoal" type="number" min="1" max="20" inputmode="numeric" value="${s.waterGoal}"></div>
+    <div class="field"><label for="sPill">Fast pilletid</label><input id="sPill" type="time" value="${esc(s.pillTime)}"></div>
+    <div class="field"><label for="sName">Navn på pillen<div class="note" style="margin:2px 0 0">Vises bare i legeoversikten</div></label><input id="sName" type="text" maxlength="40" placeholder="Valgfritt" value="${esc(s.pillName)}"></div>
+    <div class="field"><label for="sRem">Påminnelse om logging</label><input id="sRem" type="time" value="${esc(s.reminderTime)}"></div>
+    <div class="sec"><p class="label">Påminnelser i kalenderen</p>
+      <p class="sub" style="margin:0 0 10px">Appen sender ingen varsler selv (det krever en server). Last ned en gjentakende hendelse og legg den i kalenderen én gang.</p>
+      <div class="row"><button class="btn" data-action="ics-log">Logging kl. ${esc(s.reminderTime)}</button><button class="btn" data-action="ics-pill">Pille kl. ${esc(s.pillTime)}</button></div></div>
+    <div class="sec"><p class="label">Dine data</p>
+      <p class="sub" style="margin:0 0 10px">Alt ligger bare på denne enheten. Ingen konto, ingen server.${persisted===true?' Nettleseren har lovet å ikke rydde bort dataene.':' Legg appen til på Hjem-skjermen og ta backup jevnlig.'}${s.lastBackup?` Siste backup: ${new Date(s.lastBackup).toLocaleDateString('nb-NO')}.`:''}</p>
+      <div class="row"><button class="btn" data-action="export">Eksporter backup</button><button class="btn" data-action="import">Importer backup</button></div>
+      <button class="btn danger" data-action="wipe" style="width:100%;margin-top:10px">Slett alt</button></div>
+    <p class="safety">Ved sterke, økende smerter, feber, blod i avføringen eller besvimelse: kontakt legevakt (116 117).</p>
+    <button class="btn primary" data-action="close" style="width:100%">Ferdig</button>
+  </div></div>`;
+  const upd=()=>{const g=parseInt(document.getElementById('sGoal').value,10);if(g>=1&&g<=20)s.waterGoal=g;const p=document.getElementById('sPill').value;if(p)s.pillTime=p;const r=document.getElementById('sRem').value;if(r)s.reminderTime=r;s.pillName=document.getElementById('sName').value.trim();save()};
+  ['sGoal','sPill','sRem','sName'].forEach(id=>document.getElementById(id).addEventListener('change',()=>{upd();renderSettings()}));
+}
+function download(name,text,type){
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
+}
+function ics(time,summary,desc){
+  const d=new Date(),[h,m]=time.split(':');
+  const st=`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${h}${m}00`;
+  const u=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+/,'');
+  return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Symptomhagen//NO','CALSCALE:GREGORIAN','BEGIN:VEVENT',`UID:${uid()}@symptomhagen`,`DTSTAMP:${u}`,`DTSTART:${st}`,'DURATION:PT5M','RRULE:FREQ=DAILY',`SUMMARY:${summary}`,`DESCRIPTION:${desc}`,'BEGIN:VALARM','ACTION:DISPLAY',`DESCRIPTION:${summary}`,'TRIGGER:PT0M','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
+}
+
+/* ---------- Onboarding ---------- */
+function renderOnboarding(){
+  document.getElementById('modal').innerHTML=`<div class="overlay"><div class="sheet" role="dialog" aria-label="Velkommen">
+    <div class="grab"></div>
+    <div class="hero" style="margin-top:-10px"><svg viewBox="0 0 100 110" aria-hidden="true"><ellipse cx="50" cy="88" rx="34" ry="7.5" fill="var(--soil-soft)"/><g transform="translate(50 86) scale(1.25) translate(-50 -86)">${plant('god',4,50,86)}</g></svg></div>
+    <h2 class="serif">Velkommen til hagen din</h2>
+    <p>Logg dagen med ett trykk. Hver logging planter noe, vann får det til å vokse, og pillen legger stein på stien.</p>
+    <p><b>Alt blir værende på denne telefonen.</b> Ingen konto, ingen server, ingen som ser det.</p>
+    <div class="banner" style="margin:14px 0"><div><b>Viktig på iPhone:</b> Trykk Del-knappen i Safari og velg «Legg til på Hjem-skjerm». Bruk appen derfra. Ellers kan iPhone slette dataene etter 7 dager uten bruk.</div></div>
+    <p class="sub">Ta backup innimellom under Innstillinger. Appen minner deg på det én gang i måneden.</p>
+    <button class="btn primary" data-action="onboard" style="width:100%;margin-top:8px">Start hagen</button>
+  </div></div>`;
+}
+function closeModal(){document.getElementById('modal').innerHTML='';epDraft=null}
+
+/* ---------- Render ---------- */
+function render(){
+  for(const t of ['idag','hagen','oversikt','legen'])document.getElementById('tab-'+t).classList.toggle('hidden',t!==tab);
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===tab));
+  ({idag:renderToday,hagen:renderGarden,oversikt:renderOverview,legen:renderDoctor})[tab]();
+}
+
+/* ---------- Handlinger ---------- */
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-action]');if(!el)return;
+  const a=el.dataset.action,v=el.dataset.v;
+  if(a==='close-bg'){if(e.target===el)closeModal();return}
+  switch(a){
+    case 'tab':tab=v;if(v==='idag')cur=todayKey();render();scrollTo(0,0);break;
+    case 'day':{const n=addDays(cur,+v);if(n<=todayKey()){cur=n;render()}break}
+    case 'goto':cur=v;tab='idag';render();scrollTo(0,0);break;
+    case 'mood':{const d=mut(cur);d.mood=d.mood===v?null:v;save();render();if(d.mood)toast(moodMsg(cur,v));break}
+    case 'pill':{const d=mut(cur);if(d.pill){d.pill=null;save();render();toast('Pillen er fjernet for denne dagen.')}else{d.pill=cur===todayKey()?nowHM():S.settings.pillTime;save();render();toast(pillMsg(cur))}break}
+    case 'water':{const d=mut(cur);d.water=Math.max(0,d.water+(+v));save();render();if(+v>0)toast(waterMsg(cur,d.water));break}
+    case 'stool':{const d=mut(cur);const t=document.getElementById('stoolTime').value||(cur===todayKey()?nowHM():'—');d.stools.push({type:v,at:t});d.stools.sort((a,b)=>a.at.localeCompare(b.at));save();render();toast(`${STOOLNAME[v]} registrert kl. ${t}. ${d.stools.length} totalt ${cur===todayKey()?'i dag':'denne dagen'}.`);break}
+    case 'stool-del':{const d=mut(cur);d.stools.splice(+v,1);save();render();break}
+    case 'constip':{const d=mut(cur);const b=v==='ja';d.constipated=d.constipated===b?null:b;save();render();break}
+    case 'bleed':{const d=mut(cur);d.bleeding=d.bleeding===v?null:v;save();render();break}
+    case 'ep-new':openEpisode(null);break;
+    case 'ep-edit':openEpisode(v);break;
+    case 'ep-sym':{const i=epDraft.symptoms.indexOf(v);i<0?epDraft.symptoms.push(v):epDraft.symptoms.splice(i,1);renderEpisode();break}
+    case 'ep-sev':epDraft.severity=epDraft.severity===+v?null:+v;renderEpisode();break;
+    case 'ep-when':epDraft.when=v;renderEpisode();break;
+    case 'ep-dur':epDraft.duration=epDraft.duration===v?null:v;renderEpisode();break;
+    case 'ep-rel':epDraft.relief=epDraft.relief===v?null:v;renderEpisode();break;
+    case 'ep-save':saveEpisode();break;
+    case 'ep-del':if(confirm('Slette denne episoden?')){const d=mut(cur);d.episodes=d.episodes.filter(x=>x.id!==epDraft.id);save();closeModal();render()}break;
+    case 'close':closeModal();if(tab!=='idag')render();else render();break;
+    case 'settings':renderSettings();break;
+    case 'week':weekOff=Math.min(0,weekOff+(+v));render();break;
+    case 'month':monthOff=Math.min(0,monthOff+(+v));render();break;
+    case 'doc':docPeriod=v;render();break;
+    case 'print':window.print();break;
+    case 'export':S.settings.lastBackup=Date.now();save();download(`symptomhagen-backup-${todayKey()}.json`,JSON.stringify(S,null,2),'application/json');toast('Backup lastet ned. Lagre den et trygt sted.');if(!document.getElementById('modal').innerHTML)render();else renderSettings();break;
+    case 'backup-later':S.settings.lastBackupPrompt=Date.now();save();render();break;
+    case 'import':document.getElementById('importFile').click();break;
+    case 'wipe':if(confirm('Slette ALT? Dette kan ikke angres. Ta gjerne backup først.')&&confirm('Helt sikker?')){const keep={...S.settings,lastBackup:null,lastBackupPrompt:null,firstUse:Date.now()};S=defaults();S.settings=Object.assign(S.settings,keep);save();closeModal();cur=todayKey();render();toast('Alt er slettet. Ny, tom hage.')}break;
+    case 'ics-log':download('hagen-paaminnelse.ics',ics(S.settings.reminderTime,'Logg dagen i hagen 🌱','Ett trykk holder.'),'text/calendar');break;
+    case 'ics-pill':download('hagen-pille.ics',ics(S.settings.pillTime,'Ta pillen 💊','Trykk «Tatt pillen» i hagen etterpå.'),'text/calendar');break;
+    case 'onboard':S.settings.onboarded=true;S.settings.firstUse=Date.now();save();closeModal();try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}render();break;
+  }
+});
+document.getElementById('importFile').addEventListener('change',async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{
+    const next=hydrate(await f.text());
+    const n=Object.keys(next.days).length;
+    if(!confirm(`Backupen har ${n} dager. Erstatte alt som ligger i appen nå?`))return;
+    S=next;S.settings.onboarded=true;save();closeModal();render();toast(`Importert: ${n} dager.`);
+  }catch(err){alert('Fant ikke gyldige data i filen.')}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('modal').innerHTML&&S.settings.onboarded)closeModal()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&tab==='idag'&&!epDraft&&!document.getElementById('modal').innerHTML){if(cur<todayKey()&&window._lastToday!==todayKey())cur=todayKey();window._lastToday=todayKey();render()}});
+
+/* ---------- Start ---------- */
+(async()=>{
+  await load();
+  window._lastToday=todayKey();
+  render();
+  if(!S.settings.onboarded)renderOnboarding();
+  if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+})();
+</script>
+</body>
+</html>
